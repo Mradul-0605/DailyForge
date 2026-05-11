@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { CheckCircle2, Calendar, Flame, ArrowRight } from "lucide-react";
+import LiveClock from "../components/Dashboard/LiveClock";
 
 import StatCard from "../components/Dashboard/StatCard";
 import TaskPreview from "../components/Dashboard/TaskPreview";
@@ -61,11 +62,19 @@ export default function Dashboard() {
     <div className="min-h-screen w-full max-w-[1440px] mx-auto app-bg px-6 py-8 space-y-8 animate-in">
       {/* Header */}
       <header className="animate-in flex flex-col lg:flex-row justify-between items-start lg:items-center p-6 shadow-md rounded-xl bg-(--surface) gap-4">
-        <div>
+         {/* Display time */}
+        <div className="w-full">
           <h1 className="text-2xl font-semibold text-main leading-tight">
-            Good afternoon, {user?.name}
+            {
+              new Date().getHours() < 12
+                ? "Good morning"
+                : new Date().getHours() < 18
+                ? "Good afternoon"
+                : "Good evening"
+            }, {user?.name}
           </h1>
-          <p className="text-sm text-muted mt-1">
+          <div className="flex justify-between items-center mt-1 w-full">
+          <p className="text-sm text-muted">
             {new Date()
               .toLocaleDateString("en-US", {
                 weekday: "long",
@@ -74,6 +83,8 @@ export default function Dashboard() {
               })
               .replace(",", " ·")}
           </p>
+          <LiveClock />
+        </div>
         </div>
       </header>
 
