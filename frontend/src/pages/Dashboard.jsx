@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [savedRoutines, setSavedRoutines] = useState([]);
   const [loadingRoutines, setLoadingRoutines] = useState(false);
 
-  const { tasks } = useTasks();
+  const { tasks, updateTask } = useTasks();
 
   const today = new Date();
 
@@ -35,6 +35,27 @@ export default function Dashboard() {
   ).length;
 
   const totalToday = todayTasks.length;
+
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  const weekTasks = tasks.filter((task) => {
+    const created = new Date(task.createdAt);
+    return created >= startOfWeek && created <= endOfWeek;
+  });
+
+  const completedThisWeek = weekTasks.filter(
+    (task) => task.status === "Completed"
+  ).length;
+
+  const weeklyCompletionPercent = weekTasks.length
+    ? Math.round((completedThisWeek / weekTasks.length) * 100)
+    : 0;
 
   const upcomingTasks = tasks
     .filter((task) => task.status !== "Completed")
@@ -101,7 +122,7 @@ export default function Dashboard() {
         <div className="flex-1 animate-in delay-200">
           <StatCard
             label="This Week"
-            value="72%"
+            value={`${weeklyCompletionPercent}%`}
             subtitle="Completion"
             icon={<Calendar size={20} />}
           />
@@ -117,11 +138,14 @@ export default function Dashboard() {
       <section className="flex animate-in delay-200 flex-col lg:flex-row gap-6 w-full">
         {/* Upcoming Tasks */}
         <div className="flex-1 animate-in delay-300">
-          <TaskPreview tasks={upcomingTasks} />
+          <TaskPreview
+              tasks={upcomingTasks}
+              updateTask={updateTask}
+          />
         </div>
 
         {/* Saved Routines */}
-        <div className="flex-1 animate-in delay-300 flex flex-col bg-white/80 rounded-xl shadow-md p-4 h-74 overflow-y-auto relative">
+        <div className="card flex-1 animate-in delay-300 flex flex-col h-[340px] overflow-y-auto relative">
           {/* Header with button */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold text-main">Saved Routines</h2>
@@ -145,10 +169,15 @@ export default function Dashboard() {
               {savedRoutines.map((routine) => (
                 <li
                   key={routine._id}
-                  className="border border-soft rounded-lg p-2 bg-white/80 shadow-sm hover-lift animate-in"
+                  className="border-l-4 border-primary rounded-xl p-4 bg-white/80 hover:bg-white shadow-sm hover:shadow-md transition-all duration-200 animate-in"
                 >
                   <p className="font-medium text-main">{routine.name}</p>
-                  <p className="text-xs text-muted">
+                  {routine.description && (
+                    <p className="text-xs text-muted mt-0.5 line-clamp-2 italic">
+                      {routine.description}
+                    </p>
+                  )}
+                  <p className="text-[10px] text-muted/80 mt-1 uppercase tracking-wider">
                     {routine.items.length} tasks across{" "}
                     {new Set(routine.items.map((i) => i.day)).size} day(s)
                   </p>

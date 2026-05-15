@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useTasks from "../../hooks/useTasks";
 
-export default function TaskPreview({ tasks }) {
+
+export default function TaskPreview({ tasks , updateTask}) {
   const navigate = useNavigate();
-  const { updateTask } = useTasks();
 
   const [now, setNow] = useState(new Date());
 
@@ -29,7 +28,7 @@ export default function TaskPreview({ tasks }) {
   };
 
   return (
-    <div className="bg-(--surface) rounded-2xl shadow-lg p-6 border border-white/10">
+    <div className="card w-full">
       <h2 className="text-lg font-semibold text-main mb-4">Upcoming Tasks</h2>
 
       {tasks?.length ? (
