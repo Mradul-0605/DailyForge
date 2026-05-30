@@ -256,6 +256,44 @@ const handleDuplicateRoutine = async () => {
         </div>
 
       </header>
+      <header className="animate-in flex flex-col lg:flex-row justify-between items-start lg:items-center p-6 shadow-md rounded-xl bg-(--surface) gap-6">
+
+          {/* Left Section */}
+          <div className="space-y-2">
+            <h1 className="text-2xl font-semibold text-main leading-tight">
+              {getGreeting()}, {user?.name}
+            </h1>
+
+            <p className="text-sm italic text-primary">
+              "{quote}"
+            </p>
+
+            <p className="text-sm text-muted">
+              {new Date()
+                .toLocaleDateString("en-US", {
+                  weekday: "long",
+                  day: "2-digit",
+                  month: "short",
+                })
+                .replace(",", " ·")}
+            </p>
+          </div>
+
+          {/* Right Section */}
+          <div className="flex flex-col items-center gap-2 self-end lg:self-auto">
+            
+            <img
+              src={profileImage}
+              alt="Profile"
+              className="w-20 h-20 rounded-full object-cover border-2 border-white shadow-md cursor-pointer"
+              onClick={() => setShowProfilePreview(true)}
+            />
+
+            <LiveClock />
+
+          </div>
+
+        </header>
         {showProfilePreview && (
           <div
             className="fixed inset-0 bg-black/70 flex flex-col items-center justify-center z-50 px-4"
